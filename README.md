@@ -5,9 +5,11 @@ A roguelike centered around the best beverage humanity ever created.
 
 ## Gameplay
 
-### Fighting
-Describe the player sprite and its base attack, as well as the attack types obtainable through picking up loot.
-<br />Insert screenshots of the game (when ready).
+### Combat
+The player can damage the enemies using one of three types of attacks:
+- The **Slash** (**Szarża Żubra**) - damage groups of opponents standing directly in your path. (BASE ATTACK)
+- The **Spin** (**Okołocim**) - great for dealing with opponents coming from multiple directions at the same time.
+- The **Bomb** (**Łap Harnasia**) - throw a beer bomb to eliminate your opponents from a safe distance.
 
 ### Enemies
 Describe the different types of enemy sprites - their appearance, attacks, drops, as well as general enemy behaviour (spawing in waves, utilizing the shortest path to the player).
