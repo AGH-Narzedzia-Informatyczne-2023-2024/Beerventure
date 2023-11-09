@@ -1,6 +1,5 @@
 # Beerventure
-A roguelike centered around the best beverage humanity ever created.
-<br />Add description here (describe where the idea came from, what type of game it is, the graphics used, etc.).
+A roguelike centered around the best beverage humanity ever created. It's a 2D game based on classic principles: exploring an endless dungeon, fighting enormous waves containg various types of enemies and seeking the most favourable attacks' upgreades. However it's based on a subject quite unusual but very familiar to us, undergratuates: beer. It's graphic will mostly be in pixelart style and it's being developed using Python.
 <br />Insert screenshots of the game (when ready).
 
 ## Gameplay
