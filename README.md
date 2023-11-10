@@ -19,7 +19,7 @@ Describe the effects of different types of loot dropped by the enemies.
 <br />Insert screenshots of the game (when ready).
 
 ### Progress
-Describe how the game progresses - increased number of enemies in each new wave, map changes after _n_ waves, boss fights.<br/><br/>
+The game's goal is to survive for 10 minutes. Every two and a half minutes a boss spawns, thus pausing the timer. After its the defeat the boss drops an additional upgrade for the player to collect. Every minute and fifteen seconds the enemies grow stronger, however granting slightly more XP. After collecting enough XP, the player will be enabled to upgrade their attack, HP, attack speed and/or more.
 
 ## Installation
 As Beerventure is being developed using the PyGame library in Python, if you'd like to follow along with the process you're going to need to install that first. You can do so by pasting the following command into the command prompt:
