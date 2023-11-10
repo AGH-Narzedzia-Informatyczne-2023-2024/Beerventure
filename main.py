@@ -18,9 +18,9 @@ window = pygame.display.set_mode((WIN_WIDTH * SCALE_FACTOR, WIN_HEIGHT * SCALE_F
 screen = pygame.Surface((WIN_WIDTH, WIN_HEIGHT))
 player = pl.Player(screen, 50, 10)
 enemies = []
-for i in range(10):
-    x = random.randint(40, 60)
-    y = random.randint(40, 60)
+for i in range(5):
+    x = random.randint(0, 200)
+    y = random.randint(0, 200)
     enemies.append(en.Enemy(player, x, y))
 clock = pygame.time.Clock()
 
@@ -34,7 +34,9 @@ def main():
 
         player.move(pygame.key.get_pressed())
         for enemy in enemies:
-            enemy.move()
+            if enemy.move():
+                player.hp -= 10
+                player.dmg_counter = 5
         drawWindow(window, screen, enemy, player)
 
 main()
