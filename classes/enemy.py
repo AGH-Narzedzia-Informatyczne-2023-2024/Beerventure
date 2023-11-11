@@ -1,6 +1,6 @@
 # This is the Enemy class file
 
-from settings import *
+from Beerventure.settings import *
 import numpy as np
 
 class Enemy():
@@ -56,6 +56,9 @@ class Enemy():
         if np.sqrt((self.x - self.player.x) ** 2 + (self.y - self.player.y) ** 2) < ENEMY_ATK_RANGE:
             return self.attack()
 
+        if self.in_range():
+            self.takeDmg()
+
     def attack(self):
         self.atk_counter +=1
 
@@ -66,7 +69,25 @@ class Enemy():
             return False
 
     def takeDmg(self):
-        pass
+        if self.in_range():
+            self.hp -= self.player.attack_power
 
     def showDie(self):
-        pass
+        if self.hp == 0:
+            return True
+
+    #Funkcja in_range do zmiany
+
+    def in_range(self):
+        if self.x + self.img.get_width() / 2 >= self.player.hitbox[0] :
+            return True
+
+        elif self.x + self.img.get_width() / 2 <= self.player.hitbox[2] :
+            return True
+
+        if self.y + self.img.get_height() / 2 >= self.player.hitbox[1] :
+            return True
+
+        elif self.y + self.img.get_height() / 2 <= self.player.hitbox[3] :
+            return True
+        return False

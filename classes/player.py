@@ -1,6 +1,6 @@
 # This is the Player class file
-from settings import *
-import numpy as np
+from Beerventure.settings import *
+
 
 class Player():
     def __init__(self, screen, x=0, y=0):
@@ -10,6 +10,7 @@ class Player():
         self.screen = screen
         self.hp = 100
         self.dmg_counter = 0
+        self.attack_power = PLAYER_ATTACK_POWER
 
         self.hitbox = (self.x + self.img.get_width() / 2 - PLAYER_HITBOX, 
                        self.y + self.img.get_height() / 2 - PLAYER_HITBOX,

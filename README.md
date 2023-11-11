@@ -16,7 +16,9 @@ Describe the different types of enemy sprites - their appearance, attacks, drops
 <br />Insert screenshots of the game (when ready).
 
 ### Upgrades
-Describe the effects of different types of loot dropped by the enemies.
+As for now player can acquire buffs in form of beer from slain enemies.
+We plan to add various type of beers that grant player **AMAZING** effects.
+After slaying a boss you will get special upgrade that differ from other normal upgrades. It effects could be game-changing.
 <br />Insert screenshots of the game (when ready).
 
 ### Progress
