@@ -15,8 +15,8 @@ Describe the different types of enemy sprites - their appearance, attacks, drops
 <br />Insert screenshots of the game (when ready).
 
 ### Upgrades
-Describe the effects of different types of loot dropped by the enemies.
-<br />Insert screenshots of the game (when ready).
+As for now player can acquire buffs in form of beer from slain enemies. We plan to add various type of beers that grant player AMAZING effects. After slaying a boss you will get special upgrade that differ from other normal upgrades. It effects could be game-changing.
+Insert screenshots of the game (when ready).
 
 ### Progress
 The game's goal is to survive for 10 minutes. Every two and a half minutes a boss spawns, thus pausing the timer. After its the defeat the boss drops an additional upgrade for the player to collect. Every minute and fifteen seconds the enemies grow stronger, however granting slightly more XP. After collecting enough XP, the player will be enabled to upgrade their attack, HP, attack speed and/or more.
