@@ -4,7 +4,7 @@ from settings import *
 import numpy as np
 
 class Enemy():
-    def __init__(self, player, x=400, y=400, type='c'):
+    def __init__(self, player, x=400, y=400, type=0):
         self.x = x
         self.y = y
         self.type = type
@@ -15,26 +15,31 @@ class Enemy():
         self.hp = ENEMY_HP
 
         self.angle = 0
-        self.img = ENEMY_IMGS[0]
+        self.img = ENEMY_IMGS[self.type][0]
         self.imgCount = 0
 
         self.player = player
         self.screen = player.screen
 
     def render(self):
+        if self.imgCount == FPS:
+            self.imgCount = 0
+        if self.imgCount < ENEMY_ANIM_TIME:
+            self.img = ENEMY_IMGS[self.type][0]
+        elif self.imgCount < ENEMY_ANIM_TIME * 2:
+            self.img = ENEMY_IMGS[self.type][1]
+        elif self.imgCount < ENEMY_ANIM_TIME * 3:
+            self.img = ENEMY_IMGS[self.type][0]
+        elif self.imgCount < ENEMY_ANIM_TIME * 4:
+            self.img = ENEMY_IMGS[self.type][2]
+        elif self.imgCount < ENEMY_ANIM_TIME * 5:
+            self.img = ENEMY_IMGS[self.type][3]
+        elif self.imgCount < ENEMY_ANIM_TIME * 6:
+            self.img = ENEMY_IMGS[self.type][0]
         self.imgCount += 1
 
-        if self.imgCount < ENEMY_ANIM_TIME:
-            self.img = ENEMY_IMGS[0]
-        elif self.imgCount < ENEMY_ANIM_TIME * 2:
-            self.img = ENEMY_IMGS[1]
-        elif self.imgCount < ENEMY_ANIM_TIME * 3:
-            self.img = ENEMY_IMGS[2]
-        elif self.imgCount < ENEMY_ANIM_TIME * 4:
-            self.img = ENEMY_IMGS[1]
-        elif self.imgCount < ENEMY_ANIM_TIME * 4 + 1:
-            self.img = ENEMY_IMGS[0]
-            self.imgCount = 0
+        if self.x + self.img.get_width() / 2 < self.player.x:
+            self.img = pygame.transform.flip(self.img, True, False)
 
         newRect = self.img.get_rect(center = (self.x + self.img.get_width() / 2, self.y + self.img.get_height() / 2))
         self.screen.blit(self.img, newRect.topleft)
@@ -48,7 +53,7 @@ class Enemy():
             self.x += dx
         elif self.x + self.img.get_width() / 2 > self.player.hitbox[2]:
             self.x -= dx
-        if self.y + self.img.get_height() / 2< self.player.hitbox[1]:
+        if self.y + self.img.get_height() / 2 < self.player.hitbox[1]:
             self.y += dy
         elif self.y + self.img.get_height() / 2 > self.player.hitbox[3]:
             self.y -= dy
