@@ -11,7 +11,10 @@ The player can damage the enemies using one of three types of attacks:
 - The **Bomb** (**Łap Harnasia**) - throw a beer bomb to eliminate your opponents from a safe distance.
 
 ### Enemies
-Describe the different types of enemy sprites - their appearance, attacks, drops, as well as general enemy behaviour (spawing in waves, utilizing the shortest path to the player).
+- **Moiras of intoxication** - spawn in groups of three. They are small, but fast, gremlin-looking and extremely annoying. Their main form of attack is waves that slow a player down due to massive hangover. They're common and easy to defeat.
+- **Dionysus** - god of wine (main opponent of beer). In opposition to archetype, it's quite sophisticated-looking. Likes huge, empty spaces. Drops grape.  
+- **Teetotaller** - very serious, looks like this one corporate rat. Its main advantage is being resistant to most types of beer. It attacks with disadvantages of beer (diseases etcetera). Drops vodka.
+
 <br />Insert screenshots of the game (when ready).
 
 ### Upgrades
