@@ -1,7 +1,6 @@
 # This is the main file
 import classes.enemy as en
 import classes.player as pl
-import numpy as np
 from settings import *
 import random
 
@@ -51,6 +50,7 @@ def drawWindow(window, screen, enemy, player):
     window.blit(pygame.transform.scale(screen, window.get_rect().size), (0, 0))
     pygame.display.update()
 
+
 pygame.init()
 font = pygame.font.SysFont('Comic Sans MS', 40)
 window = pygame.display.set_mode((WIN_WIDTH * SCALE_FACTOR, WIN_HEIGHT * SCALE_FACTOR))
@@ -69,9 +69,17 @@ def main():
 
         player.move(pygame.key.get_pressed())
         for enemy in enemies:
-            if enemy.move():
+            enemy.move()
+            if enemy.checkRange() == 1:
+                enemy.attack()
+            elif enemy.checkRange() == 2:
+                rand = random.uniform(0, 1)
+                if rand < ENEMY_THROW_PROB:
+                    enemy.throw()
+            if enemy.state and enemy.imgCount == ENEMY_ANIM_TIME * 3 and enemy.checkRange() == 1:
                 player.hp -= 10
                 player.dmg_counter = PLAYER_DMG_ANIM
+
         drawWindow(window, screen, enemy, player)
 
 main()
