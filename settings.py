@@ -14,7 +14,7 @@ PLAYER_DMG_ANIM = 8
 
 # Enemy settings
 ENEMY_STATS = {
-    'SPD': [(1.05, 0.95), (0.85, 0.75), (1.25, 1.15)],
+    'SPD': [(1, 0.9), (0.8, 0.7), (1.2, 1.1)],
     'ATK_SPD': [1.2, 1.8, 1],
     'ATK_DMG': [20, 10, 10],
     'MELEE_RANGE': [30, 25, 25],
@@ -36,54 +36,20 @@ INNER_SPAWN_RADIUS = 80
 OUTER_SPAWN_RADIUS = 140
 
 # Loading textures
-BG_IMG = pygame.transform.scale(pygame.image.load("textures/bg.jpg"), (WIN_WIDTH, WIN_HEIGHT))
+BG_IMG = pygame.transform.scale(pygame.image.load("textures/map/bg.jpg"), (WIN_WIDTH, WIN_HEIGHT))
 
 ENEMY_TYPES = ['per', 'tys', 'zyw']
 ENEMY_IMGS = []
 for dirname in os.walk('textures'):
-    IMGS = []
+    IMGS = [[] for _ in range(3)]
     if dirname[0][9:] not in ENEMY_TYPES:
-        print(dirname[0], 'a')
-        continue
+        continue    
     for filename in os.listdir(dirname[0]):
         path = os.path.join(dirname[0], filename)
         if os.path.isfile(path):
-            IMGS.append(pygame.image.load(path))
-            print(path)
+            IMGS[int(filename[0]) - 1].append(pygame.image.load(path))
     ENEMY_IMGS.append(IMGS)
 
-# ENEMY_IMGS = [[pygame.image.load("textures/zyw1.png"),
-#               pygame.image.load("textures/zyw2.png"),
-#               pygame.image.load("textures/zyw3.png"),
-#               pygame.image.load("textures/zyw4.png"),
-#               pygame.image.load("textures/zyw5.png"),
-#               pygame.image.load("textures/zyw6.png"),
-#               pygame.image.load("textures/zyw7.png"),
-#               pygame.image.load("textures/zyw8.png"),],
-#               [pygame.image.load("textures/per1.png"),
-#               pygame.image.load("textures/per2.png"),
-#               pygame.image.load("textures/per3.png"),
-#               pygame.image.load("textures/per4.png"),
-#               pygame.image.load("textures/per5.png"),
-#               pygame.image.load("textures/per6.png"),
-#               pygame.image.load("textures/per7.png"),
-#               pygame.image.load("textures/per8.png")],
-#               [pygame.image.load("textures/tys1.png"),
-#               pygame.image.load("textures/tys2.png"),
-#               pygame.image.load("textures/tys3.png"),
-#               pygame.image.load("textures/tys4.png"),
-#               pygame.image.load("textures/tys5.png"),
-#               pygame.image.load("textures/tys6.png"),
-#               pygame.image.load("textures/tys7.png"),
-#               pygame.image.load("textures/tys8.png")]]
-DEATH_IMGS = [pygame.image.load("textures/death1.png"),
-              pygame.image.load("textures/death2.png"),
-              pygame.image.load("textures/death3.png"),
-              pygame.image.load("textures/death4.png"),
-              pygame.image.load("textures/death5.png"),
-              pygame.image.load("textures/death6.png"),
-              pygame.image.load("textures/death7.png"),
-              pygame.image.load("textures/death8.png")]
 BOTTLE_IMGS = [pygame.image.load("textures/bottle/bottle1.png"),
           pygame.image.load("textures/bottle/bottle2.png"),
           pygame.image.load("textures/bottle/bottle3.png"),

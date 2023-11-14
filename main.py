@@ -55,7 +55,7 @@ pygame.init()
 font = pygame.font.SysFont('Comic Sans MS', 40)
 window = pygame.display.set_mode((WIN_WIDTH * SCALE_FACTOR, WIN_HEIGHT * SCALE_FACTOR))
 screen = pygame.Surface((WIN_WIDTH, WIN_HEIGHT))
-player = pl.Player(screen, 100 - ENEMY_IMGS[0][0].get_width() / 2, 100 - ENEMY_IMGS[0][0].get_height() / 2)
+player = pl.Player(screen, 100 - ENEMY_IMGS[0][0][0].get_width() / 2, 100 - ENEMY_IMGS[0][0][0].get_height() / 2)
 enemies = initializeWave(10)
 clock = pygame.time.Clock()
 

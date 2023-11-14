@@ -1,76 +1,9 @@
 # This is the Enemy class file
 
 from settings import *
+from .bottle import *
 import numpy as np
 import random
-
-class Bottle():
-    def __init__(self, screen, x, y, range, dir):
-        self.x = x
-        self.y = y
-        self.start_x = x
-        self.start_y = y
-        self.range = range
-        self.dir = dir
-        self.active = 1
-        self.destroy = 0
-
-        self.img = BOTTLE_IMGS[0]
-        self.img_counter = 0
-        self.angle_counter = 0
-
-        self.screen = screen
-    
-    def move(self):
-        # If bottle has hit the ground
-        if not self.active:
-            self.render()
-            return
-        
-        # Move along x axis
-        if self.dir == -1:
-            self.x -= 2
-        else:
-            self.x += 2
-        
-        # Calculate x distance from start to current and plug into function to obtain dy
-        dx = np.abs(self.start_x - self.x)
-        dy = -dx / (self.range / 4) * (dx / 3 - self.range / 3)
-        
-        # Move along y axis
-        self.y = self.start_y - dy
-
-        self.render()
-
-    def render(self):
-        # Breaking animation
-        if not self.active:
-            self.img_counter += 1
-
-            if self.img_counter < ENEMY_ANIM_TIME // 2:
-                self.img = BOTTLE_IMGS[1]
-            elif self.img_counter < ENEMY_ANIM_TIME // 2 * 2:
-                self.img = BOTTLE_IMGS[2]
-            elif self.img_counter < ENEMY_ANIM_TIME // 2 * 3:
-                self.img = BOTTLE_IMGS[3]
-            elif self.img_counter < ENEMY_ANIM_TIME // 2 * 4:
-                self.img = BOTTLE_IMGS[4]
-            elif self.img_counter < ENEMY_ANIM_TIME // 2 * 5:
-                self.img = BOTTLE_IMGS[5]
-            elif self.img_counter == ENEMY_ANIM_TIME // 2 * 5:
-                self.img = BOTTLE_IMGS[6]
-                self.destroy == 1
-            
-            self.screen.blit(self.img, (self.x, self.y))
-            return
-
-        # Rotating the texture
-        self.angle_counter += 1
-        if self.angle_counter % ENEMY_ANIM_TIME == 0:
-            self.img = pygame.transform.rotate(BOTTLE_IMGS[0], -self.dir * self.angle_counter // ENEMY_ANIM_TIME * 45)
-
-        self.screen.blit(self.img, (self.x, self.y))
-
 
 class Enemy():
     def __init__(self, player, x=400, y=400, type=0):
@@ -93,102 +26,16 @@ class Enemy():
         self.throw_prob = stats['THROW_PROB']
         self.hp = stats['HP']
 
-        self.textures = ENEMY_IMGS[self.type]
-        self.img = self.textures[0]
+        self.walk_txt = ENEMY_IMGS[self.type][0]
+        self.atk_txt = ENEMY_IMGS[self.type][1]
+        self.death_txt = ENEMY_IMGS[self.type][2]
+        self.img = self.walk_txt[0]
         self.img_counter = 0
         self.atk_counter = 0
 
         self.bottles = []
         self.player = player
         self.screen = player.screen
-
-    def render(self):
-        # self.hp -= 1
-
-        # Move and render bottles
-        for idx, bottle in enumerate(self.bottles):
-            bottle.move()
-            if bottle.dir == 1 and bottle.x > bottle.start_x + self.throw_range or bottle.dir == -1 and bottle.x < bottle.start_x - self.throw_range:
-                bottle.active = 0
-            if bottle.destroy:
-                del self.bottles[idx]
-                
-        offset = 0
-
-        # Play death animation
-        if self.hp <= 0:
-            if self.active:
-                self.img_counter = 0
-                self.active = 0
-            self.img_counter += 1
-
-            if self.img_counter < ENEMY_ANIM_TIME / 1.6:
-                self.img = DEATH_IMGS[0]
-            elif self.img_counter < ENEMY_ANIM_TIME / 1.6 * 2:
-                self.img = DEATH_IMGS[1]
-            elif self.img_counter < ENEMY_ANIM_TIME / 1.6 * 3:
-                self.img = DEATH_IMGS[2]
-            elif self.img_counter < ENEMY_ANIM_TIME / 1.6 * 4:
-                self.img = DEATH_IMGS[3]
-            elif self.img_counter < ENEMY_ANIM_TIME / 1.6 * 6:
-                self.img = DEATH_IMGS[4]
-            elif self.img_counter < ENEMY_ANIM_TIME / 1.6 * 7:
-                self.img = DEATH_IMGS[5]
-            elif self.img_counter < ENEMY_ANIM_TIME / 1.6 * 8:
-                self.img = DEATH_IMGS[6]
-            elif self.img_counter >= ENEMY_ANIM_TIME / 1.6 * 8:
-                self.img = DEATH_IMGS[7]
-                self.destroy = 1
-            
-            if self.x < self.player.x:
-                self.img = pygame.transform.flip(self.img, True, False)
-            self.screen.blit(self.img, (self.x, self.y))
-            return
-
-        # Play melee attack animation
-        if self.atk:    
-            if self.img_counter == 4 * ENEMY_ANIM_TIME:
-                if self.x > self.player.x:
-                    offset = 0
-                self.atk = 0
-            elif self.img_counter < ENEMY_ANIM_TIME:
-                self.img = self.textures[4]
-            elif self.img_counter < ENEMY_ANIM_TIME * 2:
-                self.img = self.textures[5]
-            elif self.img_counter < ENEMY_ANIM_TIME * 3:
-                self.img = self.textures[6]
-                if self.x > self.player.x:
-                    offset = -11
-                else:
-                    offset = 2
-            elif self.img_counter < ENEMY_ANIM_TIME * 4:
-                self.img = self.textures[7]
-                if self.x > self.player.x:
-                    offset = -4
-                else:
-                    offset = 0
-
-        if not self.atk:
-            if self.img_counter == FPS:
-                self.img_counter = 0
-            if self.img_counter < ENEMY_ANIM_TIME:
-                self.img = self.textures[0]
-            elif self.img_counter < ENEMY_ANIM_TIME * 2:
-                self.img = self.textures[1]
-            elif self.img_counter < ENEMY_ANIM_TIME * 3:
-                self.img = self.textures[0]
-            elif self.img_counter < ENEMY_ANIM_TIME * 4:
-                self.img = self.textures[2]
-            elif self.img_counter < ENEMY_ANIM_TIME * 5:
-                self.img = self.textures[3]
-            elif self.img_counter < ENEMY_ANIM_TIME * 6:
-                self.img = self.textures[0]
-    
-        self.img_counter += 1
-        if self.x < self.player.x:
-            self.img = pygame.transform.flip(self.img, True, False)
-
-        self.screen.blit(self.img, (self.x + offset, self.y))
 
     def move(self):
         if self.atk or not self.active:
@@ -228,12 +75,6 @@ class Enemy():
             return True
         return False
     
-    def takeDmg(self):
-        pass
-
-    def showDie(self):
-        pass
-
     def throw(self):
         if self.x < self.player.x:
             dir = 1
@@ -241,4 +82,136 @@ class Enemy():
             dir = -1
         bottle = Bottle(self.screen, self.x, self.y, self.throw_range, dir)
         self.bottles.append(bottle)
+
+    def render(self):
+        self.hp -= 1
+
+        # Move and render bottles
+        for idx, bottle in enumerate(self.bottles):
+            bottle.move()
+            if bottle.dir == 1 and bottle.x > bottle.start_x + self.throw_range or bottle.dir == -1 and bottle.x < bottle.start_x - self.throw_range:
+                bottle.active = 0
+            if bottle.destroy:
+                del self.bottles[idx]
+
+        # Play death animation
+        if self.hp <= 0:
+            self.renderDeath()
+            return
+
+        # Play melee attack animation
+        offset = 0
+        if self.atk:    
+            offset = self.renderAttack()
+
+        # Play walk animation
+        if not self.atk:
+            offset = self.renderWalk()
+    
+        self.img_counter += 1
+        if self.x < self.player.x:
+            self.img = pygame.transform.flip(self.img, True, False)
+
+        self.screen.blit(self.img, (self.x + offset, self.y))
+    
+    def renderDeath(self):
+        if self.x < self.player.x:
+            offset = -13
+        else:
+            offset = 0
+        if self.active:
+            self.img_counter = 0
+            self.active = 0
+
+        if self.img_counter < ENEMY_ANIM_TIME / 1.6:
+            self.img = self.death_txt[0]
+        elif self.img_counter < ENEMY_ANIM_TIME / 1.6 * 2:
+            self.img = self.death_txt[1]
+        elif self.img_counter < ENEMY_ANIM_TIME / 1.6 * 3:
+            self.img = self.death_txt[2]
+        elif self.img_counter < ENEMY_ANIM_TIME / 1.6 * 4:
+            self.img = self.death_txt[3]
+        elif self.img_counter < ENEMY_ANIM_TIME / 1.6 * 7:
+            self.img = self.death_txt[4]
+        elif self.img_counter < ENEMY_ANIM_TIME / 1.6 * 8:
+            self.img = self.death_txt[5]
+        elif self.img_counter < ENEMY_ANIM_TIME / 1.6 * 9:
+            self.img = self.death_txt[6]
+        elif self.img_counter >= ENEMY_ANIM_TIME / 1.6 * 9 and type != 1:
+            self.img = self.death_txt[7]
+            self.destroy = 1
+
+        # Special case for tyskie; the death animation is longer for this skin 
+        elif self.img_counter < ENEMY_ANIM_TIME / 1.6 * 10:
+            self.img = self.death_txt[7]
+        elif self.img_counter < ENEMY_ANIM_TIME / 1.6 * 12:
+            self.img = self.death_txt[8]
+        elif self.img_counter < ENEMY_ANIM_TIME / 1.6 * 13:
+            self.img = self.death_txt[9]
+        elif self.img_counter < ENEMY_ANIM_TIME / 1.6 * 16:
+            self.img = self.death_txt[10]
+        elif self.img_counter < ENEMY_ANIM_TIME / 1.6 * 17:
+            self.img = self.death_txt[11]
+        elif self.img_counter < ENEMY_ANIM_TIME / 1.6 * 18:
+            self.img = self.death_txt[12]
+        elif self.img_counter >= ENEMY_ANIM_TIME / 1.6 * 18:
+            self.img = self.death_txt[13]
+            self.destroy = 1
+        
+        self.img_counter += 1
+        if self.x < self.player.x:
+            self.img = pygame.transform.flip(self.img, True, False)
+        self.screen.blit(self.img, (self.x + offset, self.y))
+
+    def renderAttack(self):
+        offset = 0
+
+        if self.img_counter == 4 * ENEMY_ANIM_TIME:
+            if self.x > self.player.x:
+                offset = 0
+            self.atk = 0
+        elif self.img_counter < ENEMY_ANIM_TIME:
+            self.img = self.atk_txt[0]
+        elif self.img_counter < ENEMY_ANIM_TIME * 2:
+            self.img = self.atk_txt[1]
+        elif self.img_counter < ENEMY_ANIM_TIME * 3:
+            self.img = self.atk_txt[2]
+            if self.x > self.player.x:
+                offset = -11
+            else:
+                offset = 2
+        elif self.img_counter < ENEMY_ANIM_TIME * 4:
+            self.img = self.atk_txt[3]
+            if self.x > self.player.x:
+                offset = -4
+            else:
+                offset = 0
+
+        return offset
+    
+    def renderWalk(self):
+        offset = 0
+
+        if self.img_counter == FPS:
+            self.img_counter = 0
+        if self.img_counter < ENEMY_ANIM_TIME:
+            self.img = self.walk_txt[0]
+        elif self.img_counter < ENEMY_ANIM_TIME * 2:
+            self.img = self.walk_txt[1]
+            if self.x > self.player.x:
+                offset = -1
+        elif self.img_counter < ENEMY_ANIM_TIME * 3:
+            self.img = self.walk_txt[0]
+            if self.x > self.player.x:
+                offset = -2
+        elif self.img_counter < ENEMY_ANIM_TIME * 4:
+            self.img = self.walk_txt[2]
+        elif self.img_counter < ENEMY_ANIM_TIME * 5:
+            if self.x > self.player.x:
+                offset = -1
+            self.img = self.walk_txt[3]
+        elif self.img_counter < ENEMY_ANIM_TIME * 6:
+            self.img = self.walk_txt[2]
+
+        return offset
 
