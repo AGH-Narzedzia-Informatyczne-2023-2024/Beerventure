@@ -19,7 +19,7 @@ ENEMY_STATS = {
     'ATK_DMG': [20, 10, 10],
     'MELEE_RANGE': [30, 25, 25],
     'THROW_RANGE': [80, 100, 80],
-    'THROW_PROB': [0.002, 0.004, 0],
+    'THROW_PROB': [0.02, 0.04, 0.02],
     'HP': [150, 180, 150]
 }
 
@@ -34,6 +34,9 @@ ENEMY_STATS = {
 ENEMY_ANIM_TIME = 5
 INNER_SPAWN_RADIUS = 80
 OUTER_SPAWN_RADIUS = 140
+THROW_VEL = 3
+Y_SCALE = 0.4
+Z_SCALE = 0.8
 
 # Loading textures
 BG_IMG = pygame.transform.scale(pygame.image.load("textures/map/bg.jpg"), (WIN_WIDTH, WIN_HEIGHT))

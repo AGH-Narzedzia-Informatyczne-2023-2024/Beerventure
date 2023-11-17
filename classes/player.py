@@ -40,7 +40,6 @@ class Player():
                        self.y + self.img.get_height() / 2 - PLAYER_HITBOX,
                        self.x + self.img.get_width() / 2 + PLAYER_HITBOX,
                        self.y + self.img.get_height() / 2 + PLAYER_HITBOX)
-        newRect = self.img.get_rect(center = self.img.get_rect(topleft = (self.x, self.y)).center)
         pygame.draw.rect(self.screen, (0, 0, 0),
                          (self.hitbox[0], self.hitbox[1],
                           self.hitbox[2] - self.hitbox[0],

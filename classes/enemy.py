@@ -58,7 +58,7 @@ class Enemy():
         dist = np.sqrt((self.x - self.player.x) ** 2 + (self.y - self.player.y) ** 2)
         if dist < self.melee_range:
             return 1
-        elif dist < self.throw_range and self.y > self.player.y - PLAYER_HITBOX and self.y < self.player.y + self.player.img.get_height() + PLAYER_HITBOX:
+        elif dist > self.throw_range - 5 and dist < self.throw_range:
             return 2
         
         self.atk_counter = 0
@@ -80,16 +80,16 @@ class Enemy():
             dir = 1
         else:
             dir = -1
-        bottle = Bottle(self.screen, self.x, self.y, self.throw_range, dir)
+        bottle = Bottle(self.screen, self.x, self.y, self.player.x, self.player.y, self.throw_range, dir)
         self.bottles.append(bottle)
 
     def render(self):
-        self.hp -= 1
+        # self.hp -= 1
 
         # Move and render bottles
         for idx, bottle in enumerate(self.bottles):
             bottle.move()
-            if bottle.dir == 1 and bottle.x > bottle.start_x + self.throw_range or bottle.dir == -1 and bottle.x < bottle.start_x - self.throw_range:
+            if bottle.dir == 1 and bottle.x > bottle.dest_x and bottle.y >= bottle.dest_y or bottle.dir == -1 and bottle.x < bottle.dest_x and bottle.y >= bottle.dest_y :
                 bottle.active = 0
             if bottle.destroy:
                 del self.bottles[idx]

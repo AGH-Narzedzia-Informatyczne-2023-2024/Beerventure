@@ -2,13 +2,21 @@ from settings import *
 import numpy as np
 
 class Bottle():
-    def __init__(self, screen, x, y, range, dir):
+    def __init__(self, screen, x, y, dest_x, dest_y, range, dir):
         self.x = x
         self.y = y
         self.start_x = x
         self.start_y = y
+        self.dest_x = dest_x
+        self.dest_y = dest_y
+        if dir == 1:
+            self.grad = (y - dest_y) / (dest_x - x)
+        else:
+            self.grad = -(y - dest_y) / (dest_x - x)
         self.range = range
         self.dir = dir
+        self.time = 0
+
         self.active = 1
         self.destroy = 0
 
@@ -25,17 +33,25 @@ class Bottle():
             return
         
         # Move along x axis
+        dx = np.sqrt(THROW_VEL ** 2 / (self.grad ** 2 + 1))
         if self.dir == -1:
-            self.x -= 2
+            self.x -= dx
         else:
-            self.x += 2
+            self.x += dx
         
-        # Calculate x distance from start to current and plug into function to obtain dy
+        # Calculate x distance from start to current and plug into linear function to obtain dy
         dx = np.abs(self.start_x - self.x)
-        dy = -dx / (self.range / 4) * (dx / 3 - self.range / 3)
+        dy = self.grad * dx
         
-        # Move along y axis
-        self.y = self.start_y - dy
+        # Calculate the distance from the origin and plug into quadratic function to obtain dz
+        dist = np.sqrt(dx ** 2 + dy ** 2)
+        dz = -dist / (self.range / 4) * (dist / 3 - self.range / 3)
+
+        # Scale dy and dz to obtain the y-coordinate of the bottle
+        if self.start_y > self.dest_y:
+            self.y = self.start_y - dy * (2 * Y_SCALE) - dz * Z_SCALE
+        else:
+            self.y = self.start_y - dy * Y_SCALE - dz * Z_SCALE
 
         self.render()
 
