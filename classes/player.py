@@ -23,6 +23,7 @@ class Player():
         self.img_counter = 0
         self.atk_counter = 0
         self.side = 0   #left = 0, right = 1
+        self.if_stopped = True  #true , false 
 
         self.hitbox = (self.x + self.img.get_width() / 2 - PLAYER_HITBOX, 
                        self.y + self.img.get_height() / 2 - PLAYER_HITBOX,
@@ -30,9 +31,6 @@ class Player():
                        self.y + self.img.get_height() / 2 + PLAYER_HITBOX)
 
     def render(self):
-        if self.dmg_counter > 0:
-            self.dmg_counter -= 1
-            self.img = ENEMY_IMGS[self.pl_texture+1][0][0]
 
         if self.img_counter > 0:
             self.renderWalk()
@@ -40,29 +38,46 @@ class Player():
         if self.img_counter > 29:
             self.img_counter = 0
 
+        if self.if_stopped:
+            self.img = self.walk_txt[0]
+
+        if self.dmg_counter > 0:
+            self.dmg_counter -= 1
+            self.img = ENEMY_IMGS[self.pl_texture+1][0][0]
+
         if self.side == 1:
             self.img = pygame.transform.flip(self.img, True, False)
 
         newRect = self.img.get_rect(center = self.img.get_rect(topleft = (self.x, self.y)).center)
         self.screen.blit(self.img, newRect.topleft)
 
-        self.img = ENEMY_IMGS[self.pl_texture][0][0]
+        #self.img = ENEMY_IMGS[self.pl_texture][0][0]
 
     def move(self, keys):
+        ratio = 1
+
+        if (keys[pygame.K_RIGHT] and [pygame.K_UP]) or (keys[pygame.K_RIGHT] and [pygame.K_DOWN]) or (keys[pygame.K_LEFT] and [pygame.K_UP]) or (keys[pygame.K_LEFT] and [pygame.K_DOWN]):
+            ratio /= np.sqrt(2)
+
         if keys[pygame.K_RIGHT]:
-            self.x += 2
-            self.img_counter += 1
+            self.x += 2 * ratio
+            self.img_counter += 1 * ratio
             self.side = 1
         if keys[pygame.K_UP]:
-            self.y -= 2
-            self.img_counter += 1
+            self.y -= 2 * ratio
+            self.img_counter += 1 * ratio
         if keys[pygame.K_LEFT]:
-            self.x -= 2
-            self.img_counter += 1
+            self.x -= 2 * ratio
+            self.img_counter += 1 * ratio
             self.side = 0
         if keys[pygame.K_DOWN]:
-            self.y += 2
-            self.img_counter += 1
+            self.y += 2 * ratio
+            self.img_counter += 1 * ratio
+
+        if (keys[pygame.K_DOWN]==False) and (keys[pygame.K_UP]==False) and (keys[pygame.K_LEFT]==False) and (keys[pygame.K_RIGHT]==False):
+            self.if_stopped = True
+        else:
+            self.if_stopped = False
 
         self.hitbox = (self.x + self.img.get_width() / 2 - PLAYER_HITBOX, 
                        self.y + self.img.get_height() / 2 - PLAYER_HITBOX,
