@@ -4,12 +4,25 @@ import numpy as np
 
 class Player():
     def __init__(self, screen, x=0, y=0):
+
+        #for now player textures as for enemy type==[self.pl_texture]
+        #to change when player textures ready
+        self.pl_texture = 0
+
         self.x = x
         self.y = y
-        self.img = ENEMY_IMGS[0][0][0]
+        self.img = ENEMY_IMGS[self.pl_texture][0][0]
         self.screen = screen
         self.hp = 100
         self.dmg_counter = 0
+
+        self.walk_txt = ENEMY_IMGS[self.pl_texture][0]
+        self.atk_txt = ENEMY_IMGS[self.pl_texture][1]
+        self.death_txt = ENEMY_IMGS[self.pl_texture][2]
+        self.img = self.walk_txt[0]
+        self.img_counter = 0
+        self.atk_counter = 0
+        self.side = 0   #left = 0, right = 1
 
         self.hitbox = (self.x + self.img.get_width() / 2 - PLAYER_HITBOX, 
                        self.y + self.img.get_height() / 2 - PLAYER_HITBOX,
@@ -19,22 +32,37 @@ class Player():
     def render(self):
         if self.dmg_counter > 0:
             self.dmg_counter -= 1
-            self.img = ENEMY_IMGS[1][0][0]
-            
+            self.img = ENEMY_IMGS[self.pl_texture+1][0][0]
+
+        if self.img_counter > 0:
+            self.renderWalk()
+
+        if self.img_counter > 29:
+            self.img_counter = 0
+
+        if self.side == 1:
+            self.img = pygame.transform.flip(self.img, True, False)
+
         newRect = self.img.get_rect(center = self.img.get_rect(topleft = (self.x, self.y)).center)
         self.screen.blit(self.img, newRect.topleft)
 
-        self.img = ENEMY_IMGS[0][0][0]
+        self.img = ENEMY_IMGS[self.pl_texture][0][0]
 
     def move(self, keys):
         if keys[pygame.K_RIGHT]:
             self.x += 2
+            self.img_counter += 1
+            self.side = 1
         if keys[pygame.K_UP]:
             self.y -= 2
+            self.img_counter += 1
         if keys[pygame.K_LEFT]:
             self.x -= 2
+            self.img_counter += 1
+            self.side = 0
         if keys[pygame.K_DOWN]:
             self.y += 2
+            self.img_counter += 1
 
         self.hitbox = (self.x + self.img.get_width() / 2 - PLAYER_HITBOX, 
                        self.y + self.img.get_height() / 2 - PLAYER_HITBOX,
@@ -44,3 +72,20 @@ class Player():
                          (self.hitbox[0], self.hitbox[1],
                           self.hitbox[2] - self.hitbox[0],
                           self.hitbox[3] - self.hitbox[1]))
+
+    def renderWalk(self):
+
+        if self.img_counter == FPS:
+            self.img_counter = 0
+        if self.img_counter < ENEMY_ANIM_TIME:
+            self.img = self.walk_txt[0]
+        elif self.img_counter < ENEMY_ANIM_TIME * 2:
+            self.img = self.walk_txt[1]
+        elif self.img_counter < ENEMY_ANIM_TIME * 3:
+            self.img = self.walk_txt[0]
+        elif self.img_counter < ENEMY_ANIM_TIME * 4:
+            self.img = self.walk_txt[2]
+        elif self.img_counter < ENEMY_ANIM_TIME * 5:
+            self.img = self.walk_txt[3]
+        elif self.img_counter < ENEMY_ANIM_TIME * 6:
+            self.img = self.walk_txt[2]
