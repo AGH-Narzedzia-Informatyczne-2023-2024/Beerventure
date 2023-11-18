@@ -15,7 +15,7 @@ PLAYER_DMG_ANIM = 8
 # Enemy settings
 ENEMY_STATS = {
     'SPD': [(1, 0.9), (0.8, 0.7), (1.2, 1.1)],
-    'ATK_SPD': [1.2, 1.8, 1],
+    'ATK_SPD': [FPS / 1.5, FPS / 1, FPS / 1],
     'ATK_DMG': [20, 10, 10],
     'MELEE_RANGE': [30, 25, 25],
     'THROW_RANGE': [80, 100, 80],
