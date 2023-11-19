@@ -14,9 +14,10 @@ The player can damage the enemies using one of three types of attacks:
 - **Moiras of intoxication** - spawn in groups of three. They are small, but fast, gremlin-looking and extremely annoying. Their main form of attack is waves that slow a player down due to massive hangover. They're common and easy to defeat. 
 - **Teetotaller** - very serious, looks like this one corporate rat. Its main advantage is being resistant to most types of beer. It attacks with disadvantages of beer (diseases etcetera). Drops vodka.
 #### Bosses
-- **Papa Vodka** - the russian equivalent of Santa Claus, except drunk and gifting Vodka instead of gifts. For those beerdrinkers naughty enough, he inflicts them with their worst nightmare, being fully surrounded by vodka not being able to move.
+- **Papa Vodka** - the belarussian equivalent of Santa Claus, except drunk and gifting Vodka instead of gifts. For those beerdrinkers naughty enough, he inflicts them with their worst nightmare, being fully surrounded by vodka not being able to move. Drops potato.
 - **Dionysus** - god of wine (main opponent of beer). In opposition to archetype, it's quite sophisticated-looking. Likes huge, empty spaces. Drops grape.
-- **Bourbonchaun** - a scheming gnome, who took a wrong turn in his life now keeping bourbon at the end of the rainbow instead of his gold. Ironically his main weapon is his prefered drink, which after an attack remain on the ground for some time.
+- **Bourbonchaun** - a scheming gnome, who took a wrong turn in his life now keeping bourbon at the end of the rainbow instead of his gold. Ironically his main weapon is his prefered drink, which after an attack remain on the ground for some time. Drops lucky clover.
+- **Bagpipe** - a scotish lad, only wanting 2 things from life. To play his bagpipes and to drink whisky. Whenever attacking he leaves a trail of his drink of choice in the direction of his attack
 
 <br />Insert screenshots of the game (when ready).
 
