@@ -1,6 +1,6 @@
 # This is the Player class file
-from settings import *
-import numpy as np
+from Beerventure.settings import *
+
 
 class Player():
     def __init__(self, screen, x=0, y=0):
@@ -15,6 +15,7 @@ class Player():
         self.screen = screen
         self.hp = 100
         self.dmg_counter = 0
+        self.attack_power = PLAYER_ATTACK_POWER
 
         self.walk_txt = ENEMY_IMGS[self.pl_texture][0]
         self.atk_txt = ENEMY_IMGS[self.pl_texture][1]

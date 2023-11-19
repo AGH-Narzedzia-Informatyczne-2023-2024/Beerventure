@@ -1,5 +1,7 @@
 # This is the settings file
+
 import pygame
+import pygame.mixer
 import os
 
 # Display settings
@@ -38,6 +40,9 @@ THROW_VEL = 3
 Y_SCALE = 0.4
 Z_SCALE = 0.8
 
+# Upgrades settings
+DROP_CHANCE = 50
+
 # Loading textures
 BG_IMG = pygame.transform.scale(pygame.image.load("textures/map/bg.jpg"), (WIN_WIDTH, WIN_HEIGHT))
 
@@ -46,7 +51,7 @@ ENEMY_IMGS = []
 for dirname in os.walk('textures'):
     IMGS = [[] for _ in range(3)]
     if dirname[0][9:] not in ENEMY_TYPES:
-        continue    
+        continue
     for filename in os.listdir(dirname[0]):
         path = os.path.join(dirname[0], filename)
         if os.path.isfile(path):
@@ -60,4 +65,10 @@ BOTTLE_IMGS = [pygame.image.load("textures/bottle/bottle1.png"),
           pygame.image.load("textures/bottle/bottle5.png"),
           pygame.image.load("textures/bottle/bottle6.png"),
           pygame.image.load("textures/bottle/bottle7.png")]
-          
+UPGRADE = pygame.image.load("textures/piwo.png")
+
+# Loading sounds
+pygame.mixer.init()
+PLAYER_HURT = pygame.mixer.Sound("sounds/hitHurt.wav")
+GET_UPGRADE = [pygame.mixer.Sound("sounds/powerUp.wav"),
+               pygame.mixer.Sound("sounds/powerUp (1).wav")]

@@ -1,4 +1,7 @@
 # This is the main file
+import pygame.mixer
+
+import classes.upgrades as up
 import classes.enemy as en
 import classes.player as pl
 from settings import *
@@ -35,7 +38,7 @@ def initializeWave(size):
                 y += 1
             else:
                 y -= 1
-                
+
             dx = player.x - x
             dy = player.y - y
 
@@ -47,9 +50,11 @@ def drawWindow(window, screen, enemies, player):
     player.render()
     for enemy in enemies:
         enemy.render()
+    for upgrade in upgrades:
+        upgrade.render()
+    player.render()
     window.blit(pygame.transform.scale(screen, window.get_rect().size), (0, 0))
     pygame.display.update()
-
 
 pygame.init()
 font = pygame.font.SysFont('Comic Sans MS', 40)
@@ -57,6 +62,7 @@ window = pygame.display.set_mode((WIN_WIDTH * SCALE_FACTOR, WIN_HEIGHT * SCALE_F
 screen = pygame.Surface((WIN_WIDTH, WIN_HEIGHT))
 player = pl.Player(screen, 100 - ENEMY_IMGS[0][0][0].get_width() / 2, 100 - ENEMY_IMGS[0][0][0].get_height() / 2)
 enemies = initializeWave(10)
+upgrades = []
 clock = pygame.time.Clock()
 
 def main():
@@ -82,8 +88,14 @@ def main():
                     player.dmg_counter = PLAYER_DMG_ANIM
 
             if enemy.destroy:
+                drop = random.randint(0, 100)
+                if drop <= DROP_CHANCE:
+                    upgrades.append(up.Upgrade(enemy, player))
                 del enemies[idx]
-
+        for upgrade in upgrades:
+            if upgrade.pick_up():
+                upgrades.remove(upgrade)
+                pygame.mixer.Sound.play(GET_UPGRADE[random.randint(0,1)])
         drawWindow(window, screen, enemies, player)
 
 main()
