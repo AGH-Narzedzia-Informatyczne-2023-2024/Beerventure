@@ -37,4 +37,7 @@ class Game():
         self.window.blit(pygame.transform.scale(self.map, (MAP_WIDTH * SCALE_FACTOR, MAP_HEIGHT * SCALE_FACTOR)), win_pos)
         pygame.display.update()
 
+    def newFunction(self):
+        print('This is a function added through GitHub')
+
     
