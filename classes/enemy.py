@@ -32,16 +32,16 @@ class Enemy():
         self.img = self.walk_txt[0] # Current image being rendered
         self.img_counter = 0        # Counter variable used to display the current image for a specifies number of frames
         self.atk_counter = 0        # Counter variable used to only trigger melee attacks as often as the attack speed allows
+        self.fall_dir = 0           # Whether the enemy is facing backward (-1) or forward (1) while dying
 
         self.bottles = []           # A list of bottles currently flying towards the player
         self.player = player        # Passing the player argument
-        self.screen = player.screen # Surface to render the sprite on
+        self.map = player.map       # Surface to render the sprite on
 
     def move(self):
         # Don't move if an attack or dying animation is currently playing
         if self.atk or not self.active:
             return
-
         ratio = np.abs((self.y - self.player.y) / (self.x - self.player.x)) # Find the gradient of the line connecting the enemy to the player
         dx = np.sqrt(self.spd ** 2 / (ratio ** 2 + 1))                      # Find the distance to move on the x-axis (via pythagorean theorem)
         dy = dx * ratio                                                     # Find the distance to move on the y-axis (via the gradient)
@@ -84,10 +84,12 @@ class Enemy():
             dir = 1
         else:
             dir = -1
-        bottle = Bottle(self.screen, self.x, self.y, self.player.x, self.player.y, self.throw_range, dir)
+        bottle = Bottle(self.map, self.x, self.y, self.player.x, self.player.y, self.throw_range, dir)
         self.bottles.append(bottle) # Append the new bottle to the bottle list
 
     def render(self):
+        self.hp -= 1
+
         # Move and render bottles
         for idx, bottle in enumerate(self.bottles):
             bottle.move()
@@ -99,6 +101,13 @@ class Enemy():
 
         # Play death animation
         if self.hp <= 0:
+            # Determine which way the enemy is facing when falling
+            if not self.fall_dir:
+                if self.x < self.player.x:
+                    self.fall_dir = 1
+                else:
+                    self.fall_dir = -1
+
             self.renderDeath()
             return
 
@@ -117,7 +126,7 @@ class Enemy():
         if self.x < self.player.x:
             self.img = pygame.transform.flip(self.img, True, False)
 
-        self.screen.blit(self.img, (self.x + offset, self.y))
+        self.map.blit(self.img, (self.x + offset, self.y))
     
     def renderDeath(self):
         # If the image is flipped, it must be offset for the sprite to appear in the correct position
@@ -130,11 +139,6 @@ class Enemy():
         if self.active:
             self.img_counter = 0
             self.active = 0
-
-        # passed = self.img_counter // ENEMY_ANIM_TIME # Find how many textures of the animation have already been rendered
-        # if self.img_counter > passed * self.img_counter:
-        #     if passed == 4
-        #     self.img = self.death_txt[passed]
 
         # Render subsequent frames of the animation
         if self.img_counter < ENEMY_ANIM_TIME / 1.6:
@@ -173,9 +177,9 @@ class Enemy():
             self.destroy = 1
         
         self.img_counter += 1
-        if self.x < self.player.x:
+        if self.fall_dir == 1:
             self.img = pygame.transform.flip(self.img, True, False)
-        self.screen.blit(self.img, (self.x + offset, self.y))
+        self.map.blit(self.img, (self.x + offset, self.y))
 
     def renderAttack(self):
         offset = 0

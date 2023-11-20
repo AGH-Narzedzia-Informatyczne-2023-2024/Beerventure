@@ -5,14 +5,17 @@ import pygame.mixer
 import os
 
 # Display settings
-WIN_WIDTH = 200
-WIN_HEIGHT = 200
+WIN_WIDTH = 800
+WIN_HEIGHT = 800
+MAP_WIDTH = 1000
+MAP_HEIGHT = 1000
 SCALE_FACTOR = 4
 FPS = 30
 
 # Player settings
 PLAYER_HITBOX = 15
 PLAYER_DMG_ANIM = 8
+PLAYER_ATTACK_POWER = 15
 
 # Enemy settings
 ENEMY_STATS = {
@@ -44,7 +47,7 @@ Z_SCALE = 0.8
 DROP_CHANCE = 50
 
 # Loading textures
-BG_IMG = pygame.transform.scale(pygame.image.load("textures/map/bg.jpg"), (WIN_WIDTH, WIN_HEIGHT))
+BG_IMG = pygame.transform.scale(pygame.image.load("textures/map/bg.jpg"), (MAP_WIDTH, MAP_HEIGHT))
 
 ENEMY_TYPES = ['per', 'tys', 'zyw']
 ENEMY_IMGS = []

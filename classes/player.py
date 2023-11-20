@@ -1,9 +1,9 @@
 # This is the Player class file
-from Beerventure.settings import *
-
+from settings import *
+import numpy as np
 
 class Player():
-    def __init__(self, screen, x=0, y=0):
+    def __init__(self, map, x=0, y=0):
 
         #for now player textures as for enemy type==[self.pl_texture]
         #to change when player textures ready
@@ -12,7 +12,7 @@ class Player():
         self.x = x
         self.y = y
         self.img = ENEMY_IMGS[self.pl_texture][0][0]
-        self.screen = screen
+        self.map = map
         self.hp = 100
         self.dmg_counter = 0
         self.attack_power = PLAYER_ATTACK_POWER
@@ -50,7 +50,7 @@ class Player():
             self.img = pygame.transform.flip(self.img, True, False)
 
         newRect = self.img.get_rect(center = self.img.get_rect(topleft = (self.x, self.y)).center)
-        self.screen.blit(self.img, newRect.topleft)
+        self.map.blit(self.img, newRect.topleft)
 
         #self.img = ENEMY_IMGS[self.pl_texture][0][0]
 
@@ -84,7 +84,7 @@ class Player():
                        self.y + self.img.get_height() / 2 - PLAYER_HITBOX,
                        self.x + self.img.get_width() / 2 + PLAYER_HITBOX,
                        self.y + self.img.get_height() / 2 + PLAYER_HITBOX)
-        pygame.draw.rect(self.screen, (0, 0, 0),
+        pygame.draw.rect(self.map, (0, 0, 0),
                          (self.hitbox[0], self.hitbox[1],
                           self.hitbox[2] - self.hitbox[0],
                           self.hitbox[3] - self.hitbox[1]))
