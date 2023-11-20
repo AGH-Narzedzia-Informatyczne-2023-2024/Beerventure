@@ -7,40 +7,16 @@ import classes.player as pl
 from settings import *
 import random
 
-def initializeWave(size):
+def initializeWave(player_x, player_y, size):
     enemies = []
     for i in range(size):
-        x = random.randint(0, 200)
-        y = random.randint(0, 200)
-        type = random.randint(0, 2)
-        dx = player.x - x
-        dy = player.y - y
-
-        while dx**2 + dy**2 < INNER_SPAWN_RADIUS**2:
-            if x < player.x:
-                x -= 1
-            else:
-                x += 1
-            if y < player.y:
-                y -= 1
-            else:
-                y += 1
-
-            dx = player.x - x
-            dy = player.y - y
-
-        while dx**2 + dy**2 > OUTER_SPAWN_RADIUS**2:
-            if x < player.x:
-                x += 1
-            else:
-                x -= 1
-            if y < player.y:
-                y += 1
-            else:
-                y -= 1
-
-            dx = player.x - x
-            dy = player.y - y
+        (dirx, diry) = (choice([(np.floor(player_x - OUTER_SPAWN_RADIUS), np.floor(player_x - INNER_SPAWN_RADIUS)),
+                                (np.floor(player_x + INNER_SPAWN_RADIUS), np.floor(player_x + OUTER_SPAWN_RADIUS))]),
+        choice([(np.floor(player_y - OUTER_SPAWN_RADIUS), np.floor(player_y - INNER_SPAWN_RADIUS)),
+                (np.floor(player_y + INNER_SPAWN_RADIUS), np.floor(player_y + OUTER_SPAWN_RADIUS))])
+        x, y = randint(*dirx), randint(*diry)
+        type = randint(0, 2)
+        self.enemies.append(Enemy(self.player, x, y, type))
 
         enemies.append(en.Enemy(player, x, y, type))
     return enemies
@@ -61,7 +37,7 @@ font = pygame.font.SysFont('Comic Sans MS', 40)
 window = pygame.display.set_mode((WIN_WIDTH * SCALE_FACTOR, WIN_HEIGHT * SCALE_FACTOR))
 screen = pygame.Surface((WIN_WIDTH, WIN_HEIGHT))
 player = pl.Player(screen, 100 - ENEMY_IMGS[0][0][0].get_width() / 2, 100 - ENEMY_IMGS[0][0][0].get_height() / 2)
-enemies = initializeWave(10)
+enemies = initializeWave(player, 10)
 upgrades = []
 clock = pygame.time.Clock()
 
