@@ -6,19 +6,18 @@ import classes.enemy as en
 import classes.player as pl
 from settings import *
 from random import randint, choice
+import numpy as np
 
-def initializeWave(player_x, player_y, size):
+def initializeWave(player, size):
     enemies = []
     for i in range(size):
-        (dirx, diry) = (choice([(np.floor(player_x - OUTER_SPAWN_RADIUS), np.floor(player_x - INNER_SPAWN_RADIUS)),
-                                (np.floor(player_x + INNER_SPAWN_RADIUS), np.floor(player_x + OUTER_SPAWN_RADIUS))]),
-        choice([(np.floor(player_y - OUTER_SPAWN_RADIUS), np.floor(player_y - INNER_SPAWN_RADIUS)),
-                (np.floor(player_y + INNER_SPAWN_RADIUS), np.floor(player_y + OUTER_SPAWN_RADIUS))]))
+        (dirx, diry) = (choice([(np.floor(player.x - OUTER_SPAWN_RADIUS), np.floor(player.x - INNER_SPAWN_RADIUS)),
+                                (np.floor(player.x + INNER_SPAWN_RADIUS), np.floor(player.x + OUTER_SPAWN_RADIUS))]),
+        choice([(np.floor(player.y - OUTER_SPAWN_RADIUS), np.floor(player.y - INNER_SPAWN_RADIUS)),
+                                (np.floor(player.y + INNER_SPAWN_RADIUS), np.floor(player.y + OUTER_SPAWN_RADIUS))]))
         x, y = randint(*dirx), randint(*diry)
         type = randint(0, 2)
-        self.enemies.append(Enemy(self.player, x, y, type))
-
-        enemies.append(en.Enemy(player, x, y, type))
+        enemies.append(en.Enemy(self.player, x, y, type))
     return enemies
 
 def drawWindow(window, screen, enemies, player):
