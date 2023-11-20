@@ -5,7 +5,7 @@ import classes.upgrades as up
 import classes.enemy as en
 import classes.player as pl
 from settings import *
-import random
+from random import randint, choice
 
 def initializeWave(player_x, player_y, size):
     enemies = []
