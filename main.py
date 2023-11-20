@@ -13,7 +13,7 @@ def initializeWave(player_x, player_y, size):
         (dirx, diry) = (choice([(np.floor(player_x - OUTER_SPAWN_RADIUS), np.floor(player_x - INNER_SPAWN_RADIUS)),
                                 (np.floor(player_x + INNER_SPAWN_RADIUS), np.floor(player_x + OUTER_SPAWN_RADIUS))]),
         choice([(np.floor(player_y - OUTER_SPAWN_RADIUS), np.floor(player_y - INNER_SPAWN_RADIUS)),
-                (np.floor(player_y + INNER_SPAWN_RADIUS), np.floor(player_y + OUTER_SPAWN_RADIUS))])
+                (np.floor(player_y + INNER_SPAWN_RADIUS), np.floor(player_y + OUTER_SPAWN_RADIUS))]))
         x, y = randint(*dirx), randint(*diry)
         type = randint(0, 2)
         self.enemies.append(Enemy(self.player, x, y, type))
