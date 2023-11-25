@@ -105,3 +105,11 @@ class Player():
             self.img = self.walk_txt[3]
         elif self.img_counter < ENEMY_ANIM_TIME * 6:
             self.img = self.walk_txt[2]
+
+    #Attacks - added on Github
+
+    def Okolocim(self):
+        pass
+
+    def SzarzaZubra(self):
+        pass
