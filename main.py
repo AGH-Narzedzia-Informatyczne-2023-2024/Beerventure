@@ -38,9 +38,9 @@ def main():
                     if rand < enemy.throw_prob:
                         enemy.throw()
 
-                if enemy.atk and enemy.img_counter == ENEMY_ANIM_TIME * 3 and enemy.checkRange() == 1:
+                if enemy.atk and enemy.img_counter == ENEMY_ANIM_TIME * 3 and enemy.checkHit('melee') or enemy.checkHit('throw') == 1:
                     game.player.hp -= 10
-                    game.player.dmg_counter = PLAYER_DMG_ANIM
+                    game.player.dmg_counter = PLAYER_ANIM_TIME * 2
 
             if enemy.destroy:
                 drop = random.randint(0, 100)
@@ -51,7 +51,7 @@ def main():
         for upgrade in game.upgrades:
             if upgrade.pick_up():
                 game.upgrades.remove(upgrade)
-                pygame.mixer.Sound.play(GET_UPGRADE[random.randint(0,1)])
+                pygame.mixer.Sound.play(GET_UPGRADE[random.randint(0,1)]).set_volume(0.15)
 
         game.renderWindow()
 

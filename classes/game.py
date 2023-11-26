@@ -2,6 +2,7 @@ import pygame
 from random import randint, choice
 import numpy as np
 from .enemy import Enemy
+from .bosses import PVod
 from .player import Player
 from .upgrades import Upgrade
 from settings import *

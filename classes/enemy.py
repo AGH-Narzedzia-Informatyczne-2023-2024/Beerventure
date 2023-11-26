@@ -39,6 +39,8 @@ class Enemy():
         self.map = player.map       # Surface to render the sprite on
 
     def move(self):
+        self.hp -= 0.5
+
         # Don't move if an attack or dying animation is currently playing
         if self.atk or not self.active:
             return
@@ -47,14 +49,16 @@ class Enemy():
         dy = dx * ratio                                                     # Find the distance to move on the y-axis (via the gradient)
 
         # Move in the correct direction and don't walk onto the player
-        if self.x + self.img.get_width() / 2 < self.player.hitbox[0]:
-            self.x += dx
-        elif self.x + self.img.get_width() / 2 > self.player.hitbox[2]:
-            self.x -= dx
-        if self.y + self.img.get_height() / 2 < self.player.hitbox[1]:
-            self.y += dy
-        elif self.y + self.img.get_height() / 2 > self.player.hitbox[3]:
-            self.y -= dy
+        dist = np.sqrt((self.x - self.player.x)**2 + (self.y - self.player.y)**2)
+        if dist > PLAYER_BORDER:
+            if self.x < self.player.x:
+                self.x += dx
+            else:
+                self.x -= dx
+            if self.y < self.player.y:
+                self.y += dy
+            else:
+                self.y -= dy
 
     def checkRange(self):
         dist = np.sqrt((self.x - self.player.x) ** 2 + (self.y - self.player.y) ** 2) # Find distance from player
@@ -65,6 +69,28 @@ class Enemy():
         
         self.atk_counter = 0 # If not in range for any attack, reset the counter
         return 0
+    
+    def checkHit(self, type):
+        if type == 'melee':
+            if self.x <= self.player.x:
+                atk_xpos = self.x + self.img.get_width() / 2
+            else:
+                atk_xpos = self.x - self.img.get_width() / 2
+            if self.y <= self.player.y:
+                atk_ypos = self.y + self.img.get_height() / 2
+            else:
+                atk_ypos = self.y - self.img.get_height() / 2
+            dist = np.sqrt((atk_xpos - self.player.x) ** 2 + (atk_ypos - self.player.y) ** 2)
+            if dist < PLAYER_BORDER:
+                return 1
+            return 0
+        elif type == 'throw':
+            for bottle in self.bottles:
+                if not bottle.active:
+                    dist = np.sqrt((bottle.x - self.player.x) ** 2 + (self.y - self.player.y) ** 2)
+                    if dist < PLAYER_BORDER:
+                        return 1
+                    return 0
 
     def attack(self):
         self.atk_counter +=1
@@ -88,8 +114,6 @@ class Enemy():
         self.bottles.append(bottle) # Append the new bottle to the bottle list
 
     def render(self):
-        self.hp -= 1
-
         # Move and render bottles
         for idx, bottle in enumerate(self.bottles):
             bottle.move()
@@ -102,140 +126,41 @@ class Enemy():
         # Play death animation
         if self.hp <= 0:
             # Determine which way the enemy is facing when falling
-            if not self.fall_dir:
+            if self.fall_dir == 0:
                 if self.x < self.player.x:
                     self.fall_dir = 1
                 else:
                     self.fall_dir = -1
-
-            self.renderDeath()
-            return
+            if self.active:
+                self.img_counter = 0
+                self.active = 0
+            idx = int(self.img_counter // (DEATH_ANIM_SCALE * ENEMY_ANIM_TIME))
+            if idx == len(self.death_txt):
+                idx -= 1
+                self.destroy = 1
+            self.img = self.death_txt[idx]
 
         # Play melee attack animation
-        offset = 0
-        if self.atk:    
-            offset = self.renderAttack()
+        elif self.atk:    
+            idx = int(self.img_counter // (ATK_ANIM_SCALE * ENEMY_ANIM_TIME)) 
+            if idx == len(self.atk_txt):
+                self.img_counter = 0
+                self.atk = 0
+            else:
+                self.img = self.atk_txt[idx]
 
         # Play walk animation
-        if not self.atk:
-            offset = self.renderWalk()
-    
-        self.img_counter += 1
+        if not self.atk and self.active:
+            idx = int(self.img_counter // ENEMY_ANIM_TIME)
+            if idx == len(self.walk_txt):
+                idx = 0
+                self.img_counter = 0
+            self.img = self.walk_txt[idx]
 
         # Flip the image if facing right
-        if self.x < self.player.x:
+        if self.x < self.player.x and self.fall_dir == 0 or self.fall_dir == 1:
             self.img = pygame.transform.flip(self.img, True, False)
-
-        self.map.blit(self.img, (self.x + offset, self.y))
-    
-    def renderDeath(self):
-        # If the image is flipped, it must be offset for the sprite to appear in the correct position
-        if self.x < self.player.x:
-            offset = -13 
-        else:
-            offset = 0
-
-        # Mark the enemy as inactive the first time this function is called    
-        if self.active:
-            self.img_counter = 0
-            self.active = 0
-
-        # Render subsequent frames of the animation
-        if self.img_counter < ENEMY_ANIM_TIME / 1.6:
-            self.img = self.death_txt[0]
-        elif self.img_counter < ENEMY_ANIM_TIME / 1.6 * 2:
-            self.img = self.death_txt[1]
-        elif self.img_counter < ENEMY_ANIM_TIME / 1.6 * 3:
-            self.img = self.death_txt[2]
-        elif self.img_counter < ENEMY_ANIM_TIME / 1.6 * 4:
-            self.img = self.death_txt[3]
-        elif self.img_counter < ENEMY_ANIM_TIME / 1.6 * 7:
-            self.img = self.death_txt[4]
-        elif self.img_counter < ENEMY_ANIM_TIME / 1.6 * 8:
-            self.img = self.death_txt[5]
-        elif self.img_counter < ENEMY_ANIM_TIME / 1.6 * 9:
-            self.img = self.death_txt[6]
-        elif self.img_counter >= ENEMY_ANIM_TIME / 1.6 * 9 and type != 1:
-            self.img = self.death_txt[7]
-            self.destroy = 1
-
-        # Special case for tys; the death animation is longer for this enemy type 
-        elif self.img_counter < ENEMY_ANIM_TIME / 1.6 * 10:
-            self.img = self.death_txt[7]
-        elif self.img_counter < ENEMY_ANIM_TIME / 1.6 * 12:
-            self.img = self.death_txt[8]
-        elif self.img_counter < ENEMY_ANIM_TIME / 1.6 * 13:
-            self.img = self.death_txt[9]
-        elif self.img_counter < ENEMY_ANIM_TIME / 1.6 * 16:
-            self.img = self.death_txt[10]
-        elif self.img_counter < ENEMY_ANIM_TIME / 1.6 * 17:
-            self.img = self.death_txt[11]
-        elif self.img_counter < ENEMY_ANIM_TIME / 1.6 * 18:
-            self.img = self.death_txt[12]
-        elif self.img_counter >= ENEMY_ANIM_TIME / 1.6 * 18:
-            self.img = self.death_txt[13]
-            self.destroy = 1
-        
+        imgRect = self.img.get_rect()
+        imgRect.center = (self.x, self.y)
+        self.map.blit(self.img, imgRect)
         self.img_counter += 1
-        if self.fall_dir == 1:
-            self.img = pygame.transform.flip(self.img, True, False)
-        self.map.blit(self.img, (self.x + offset, self.y))
-
-    def renderAttack(self):
-        offset = 0
-
-        # If the animation has completed
-        if self.img_counter == 4 * ENEMY_ANIM_TIME:
-            if self.x > self.player.x:
-                offset = 0
-            self.atk = 0
-
-        # Render subsequent frames of the animation and (if needed) offset the image to appear in the correct position
-        elif self.img_counter < ENEMY_ANIM_TIME:
-            self.img = self.atk_txt[0]
-        elif self.img_counter < ENEMY_ANIM_TIME * 2:
-            self.img = self.atk_txt[1]
-        elif self.img_counter < ENEMY_ANIM_TIME * 3:
-            self.img = self.atk_txt[2]
-            if self.x > self.player.x:
-                offset = -11
-            else:
-                offset = 2
-        elif self.img_counter < ENEMY_ANIM_TIME * 4:
-            self.img = self.atk_txt[3]
-            if self.x > self.player.x:
-                offset = -4
-            else:
-                offset = 0
-
-        return offset
-    
-    def renderWalk(self):
-        offset = 0
-
-        # If the animation has completed, repeat
-        if self.img_counter == FPS:
-            self.img_counter = 0
-
-        # Render subsequent frames of the animation
-        if self.img_counter < ENEMY_ANIM_TIME:
-            self.img = self.walk_txt[0]
-        elif self.img_counter < ENEMY_ANIM_TIME * 2:
-            self.img = self.walk_txt[1]
-            if self.x > self.player.x:
-                offset = -1
-        elif self.img_counter < ENEMY_ANIM_TIME * 3:
-            self.img = self.walk_txt[0]
-            if self.x > self.player.x:
-                offset = -2
-        elif self.img_counter < ENEMY_ANIM_TIME * 4:
-            self.img = self.walk_txt[2]
-        elif self.img_counter < ENEMY_ANIM_TIME * 5:
-            if self.x > self.player.x:
-                offset = -1
-            self.img = self.walk_txt[3]
-        elif self.img_counter < ENEMY_ANIM_TIME * 6:
-            self.img = self.walk_txt[2]
-
-        return offset
-

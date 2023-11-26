@@ -1,4 +1,5 @@
 from settings import *
+import numpy as np
 
 class Upgrade():
     def __init__(self, enemy, player):
@@ -13,10 +14,12 @@ class Upgrade():
         self.y = enemy.y
 
     def render(self):
-        new_rect = self.image.get_rect(center=(self.x + self.image.get_width() / 2, self.y + self.image.get_height() / 2))
-        self.map.blit(self.image, new_rect.topleft)
+        new_rect = self.image.get_rect()
+        new_rect.center = (self.x, self.y)
+        self.map.blit(self.image, new_rect)
 
     def pick_up(self):
-        if ((self.x + self.image.get_width() / 2) >= self.player.hitbox[0] and (self.x + self.image.get_width() / 2) <= self.player.hitbox[2]) and ((self.y + self.image.get_height() / 2) >= self.player.hitbox[1] and (self.y + self.image.get_height() / 2 <= self.player.hitbox[3])):
+        dist = np.sqrt((self.x - self.player.x)**2 + (self.y - self.player.y)**2)
+        if dist < 10:
             return True
         return False

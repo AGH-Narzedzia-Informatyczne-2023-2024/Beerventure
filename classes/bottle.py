@@ -60,28 +60,17 @@ class Bottle():
     def render(self):
         # Play breaking animation
         if not self.active:
+            idx = int(self.img_counter // (ENEMY_ANIM_TIME // 2)) + 1
+            if idx == len(BOTTLE_IMGS):
+                idx -= 1
+                self.destroy = 1
+            self.img = pygame.transform.rotate(BOTTLE_IMGS[idx], -self.dir * self.angle_counter // ENEMY_ANIM_TIME * 45)
             self.img_counter += 1
-
-            if self.img_counter < ENEMY_ANIM_TIME // 2:
-                self.img = BOTTLE_IMGS[1]
-            elif self.img_counter < ENEMY_ANIM_TIME // 2 * 2:
-                self.img = BOTTLE_IMGS[2]
-            elif self.img_counter < ENEMY_ANIM_TIME // 2 * 3:
-                self.img = BOTTLE_IMGS[3]
-            elif self.img_counter < ENEMY_ANIM_TIME // 2 * 4:
-                self.img = BOTTLE_IMGS[4]
-            elif self.img_counter < ENEMY_ANIM_TIME // 2 * 5:
-                self.img = BOTTLE_IMGS[5]
-            elif self.img_counter == ENEMY_ANIM_TIME // 2 * 5:
-                self.img = BOTTLE_IMGS[6]
-                self.destroy == 1
             
-            self.screen.blit(self.img, (self.x, self.y))
-            return
-
-        # Appropriately rotate the texture
-        self.angle_counter += 1
-        if self.angle_counter % ENEMY_ANIM_TIME == 0:
-            self.img = pygame.transform.rotate(BOTTLE_IMGS[0], -self.dir * self.angle_counter // ENEMY_ANIM_TIME * 45)
+        else:
+            # Appropriately rotate the texture
+            self.angle_counter += 1
+            if self.angle_counter % ENEMY_ANIM_TIME == 0:
+                self.img = pygame.transform.rotate(BOTTLE_IMGS[0], -self.dir * self.angle_counter // ENEMY_ANIM_TIME * 45)
 
         self.screen.blit(self.img, (self.x, self.y))
