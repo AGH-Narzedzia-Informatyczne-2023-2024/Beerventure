@@ -72,23 +72,16 @@ class Enemy():
     
     def checkHit(self, type):
         if type == 'melee':
-            if self.x <= self.player.x:
-                atk_xpos = self.x + self.img.get_width() / 2
-            else:
-                atk_xpos = self.x - self.img.get_width() / 2
-            if self.y <= self.player.y:
-                atk_ypos = self.y + self.img.get_height() / 2
-            else:
-                atk_ypos = self.y - self.img.get_height() / 2
-            dist = np.sqrt((atk_xpos - self.player.x) ** 2 + (atk_ypos - self.player.y) ** 2)
-            if dist < PLAYER_BORDER:
+            dist = np.sqrt((self.x - self.player.x) ** 2 + (self.y - self.player.y) ** 2)
+            if dist < MELEE_HITBOX:
                 return 1
             return 0
         elif type == 'throw':
             for bottle in self.bottles:
                 if not bottle.active:
-                    dist = np.sqrt((bottle.x - self.player.x) ** 2 + (self.y - self.player.y) ** 2)
-                    if dist < PLAYER_BORDER:
+                    dist = np.sqrt((bottle.x - self.player.x) ** 2 + (bottle.y - self.player.y) ** 2)
+                    print(dist)
+                    if dist < BOTTLE_HITBOX:
                         return 1
                     return 0
 

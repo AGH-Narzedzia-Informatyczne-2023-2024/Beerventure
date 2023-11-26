@@ -23,7 +23,7 @@ ENEMY_STATS = {     #per        tys         zyw
     'SPD':          [(1, 0.9),  (0.8, 0.7), (1.2, 1.1)],
     'ATK_SPD':      [FPS / 1.5, FPS / 1,    FPS / 1],
     'ATK_DMG':      [20,        10,         10],
-    'MELEE_RANGE':  [30,        30,         30],
+    'MELEE_RANGE':  [25,        25,         25],
     'THROW_RANGE':  [80,        100,        80],
     'THROW_PROB':   [0.02,      0.04,       0.02],
     'HP':           [150,       180,        150]
@@ -38,11 +38,13 @@ ENEMY_STATS = {     #per        tys         zyw
 # ENEMY_THROW_PROB = 0.002
 # ENEMY_HP = 100
 ENEMY_ANIM_TIME = 5
+MELEE_HITBOX = 35
 ATK_ANIM_SCALE = 1
 DEATH_ANIM_SCALE = 0.8
 INNER_SPAWN_RADIUS = 80
 OUTER_SPAWN_RADIUS = 140
 THROW_VEL = 3
+BOTTLE_HITBOX = 20
 Y_SCALE = 0.4
 Z_SCALE = 0.8
 
