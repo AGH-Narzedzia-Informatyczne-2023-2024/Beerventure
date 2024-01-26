@@ -10,12 +10,13 @@ class Player():
 
         self.x = x
         self.y = y
+        self.sprint = 0
         self.hp = 100
         self.attack_power = PLAYER_ATTACK_POWER
         
         self.idle_txt = PLAYER_IMGS[0]
         self.walk_txt = np.array(PLAYER_IMGS[len(PLAYER_IMGS) - 1])
-        self.atk_txt = ENEMY_IMGS[0][1]
+        self.atk_txt = PLAYER_IMGS[2]
         self.death_txt = ENEMY_IMGS[0][2]
         self.img = self.idle_txt[0]
         self.img_counter = 0
@@ -23,12 +24,22 @@ class Player():
         
         self.dmg_counter = 0
         self.atk_counter = 0
+        self.atk_type = 0
         self.if_stopped = True  #true , false 
         self.map = map
 
     def render(self):
         idx = self.img_counter // PLAYER_ANIM_TIME
-        if not self.if_stopped:
+        if self.atk_type != 0:
+            idx = self.img_counter // PLAYER_ATTACK_ANIM_TIME
+            if idx >= len(self.atk_txt):
+                idx -= 1
+                self.atk_type = 0
+            self.img = self.atk_txt[idx]
+        
+        elif not self.if_stopped:
+            if self.sprint:
+                idx = int(self.img_counter // (PLAYER_ANIM_TIME // 1.2))
             if idx >= len(self.walk_txt[0]):
                 idx = 0
                 self.img_counter = 0
@@ -63,10 +74,21 @@ class Player():
 
     def move(self, keys):
         # Get the state of right, up, left, and down arrow keys
-        k_pressed = np.array([keys[pygame.K_RIGHT], keys[pygame.K_UP], keys[pygame.K_LEFT], keys[pygame.K_DOWN]])
+        k_pressed = np.array([keys[pygame.K_d], keys[pygame.K_w], keys[pygame.K_a], keys[pygame.K_s]])
+        sprint = keys[pygame.K_LSHIFT] or keys[pygame.K_RSHIFT]
+        atk_pressed = np.array([keys[pygame.K_SPACE]])
         num_pressed = np.sum(k_pressed) # Check how many are pressed at the same time
+
+        if self.atk_type != 0:
+            return
+        if atk_pressed[0]:
+            self.atk_type = 1
+            self.img_counter = 0
+            return
+        
         if num_pressed == 0:
             self.if_stopped = 1
+            return
         else:
             if num_pressed > 1:
                 spd = PLAYER_SPD / np.sqrt(2)
@@ -74,40 +96,46 @@ class Player():
                 spd = PLAYER_SPD
             self.if_stopped = 0
 
+        if sprint:
+            self.sprint = 1
+            spd += 0.3
+        else:
+            self.sprint = 0
+
         # Determine which of the 8 sides the player is facing and move in that direction
-        if keys[pygame.K_RIGHT]:
+        if keys[pygame.K_d]:
             self.x += spd
             self.side = 2
-            if keys[pygame.K_DOWN]:
+            if keys[pygame.K_s]:
                 self.side = 1
-            if keys[pygame.K_UP]:
+            if keys[pygame.K_w]:
                 self.side = 3
-        if keys[pygame.K_UP]:
+        if keys[pygame.K_w]:
             self.y -= spd
             self.side = 4
-            if keys[pygame.K_LEFT]:
+            if keys[pygame.K_a]:
                 self.side = -3
-            if keys[pygame.K_RIGHT]:
+            if keys[pygame.K_d]:
                 self.side = 3
-        if keys[pygame.K_LEFT]:
+        if keys[pygame.K_a]:
             self.x -= spd
             self.side = -2
-            if keys[pygame.K_DOWN]:
+            if keys[pygame.K_s]:
                 self.side = -1
-            if keys[pygame.K_UP]:
+            if keys[pygame.K_w]:
                 self.side = -3
-        if keys[pygame.K_DOWN]:
+        if keys[pygame.K_s]:
             self.y += spd
             self.side = 0
-            if keys[pygame.K_LEFT]:
+            if keys[pygame.K_a]:
                 self.side = -1
-            if keys[pygame.K_RIGHT]:
+            if keys[pygame.K_d]:
                 self.side = 1
 
 # Attacks added locally
 
     def Slash(self):
-        pass
+        self.atk_type = 1
 
     def Spin(self):
         pass

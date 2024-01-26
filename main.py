@@ -14,6 +14,7 @@ game = Game()
 clock = pygame.time.Clock()
 
 def main():
+    
     while True:
         clock.tick(FPS)
         events = pygame.event.get()
@@ -29,6 +30,9 @@ def main():
         for idx, enemy in enumerate(game.enemies):
             if enemy.active:
                 enemy.move()
+                hit = enemy.checkDmg(pygame.key.get_pressed())
+                if hit:
+                    enemy.dmg_counter = PLAYER_ATTACK_ANIM_TIME * 3                           
                 
                 if enemy.checkRange() == 1:
                     enemy.attack()

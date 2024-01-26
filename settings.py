@@ -14,9 +14,11 @@ FPS = 30
 
 # Player settings
 PLAYER_BORDER = 20
-PLAYER_ATTACK_POWER = 15
+PLAYER_ATTACK_POWER = 50
+PLAYER_SLASH_RANGE = 40
 PLAYER_ANIM_TIME = 6
-PLAYER_SPD = 1.2
+PLAYER_ATTACK_ANIM_TIME = 3
+PLAYER_SPD = 1.5
 
 # Enemy settings
 ENEMY_STATS = {     #per        tys         zyw
@@ -66,7 +68,7 @@ DROP_CHANCE = 50
 # Loading textures
 BG_IMG = pygame.transform.scale(pygame.image.load("textures/map/bg.jpg"), (MAP_WIDTH, MAP_HEIGHT))
 
-PLAYER_IMGS = [[] for _ in range(2)]
+PLAYER_IMGS = [[] for _ in range(3)]
 WALK_IMGS = [[] for _ in range(5)]
 for filename in os.listdir('textures\player'):
     path = os.path.join('textures\player', filename)

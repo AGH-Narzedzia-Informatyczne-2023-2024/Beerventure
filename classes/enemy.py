@@ -9,6 +9,7 @@ class Enemy():
     def __init__(self, player, x=400, y=400, type=0):
         self.x = x       # Current position
         self.y = y       #
+        self.pushback = 0
         self.type = type # Enemy type (per / tys / zyw)
         self.atk = 0     # Whether the enemy is currently in an attack animation (1) or not (0)
         self.active = 1  # Whether the enemy is alive (1) or in the dying animation (0)
@@ -32,6 +33,8 @@ class Enemy():
         self.img = self.walk_txt[0] # Current image being rendered
         self.img_counter = 0        # Counter variable used to display the current image for a specifies number of frames
         self.atk_counter = 0        # Counter variable used to only trigger melee attacks as often as the attack speed allows
+        self.pushback_counter = 0
+        self.dmg_counter = 0
         self.fall_dir = 0           # Whether the enemy is facing backward (-1) or forward (1) while dying
 
         self.bottles = []           # A list of bottles currently flying towards the player
@@ -39,26 +42,45 @@ class Enemy():
         self.map = player.map       # Surface to render the sprite on
 
     def move(self):
-        self.hp -= 0.5
 
         # Don't move if an attack or dying animation is currently playing
-        if self.atk or not self.active:
+        if not self.active:
             return
         ratio = np.abs((self.y - self.player.y) / (self.x - self.player.x)) # Find the gradient of the line connecting the enemy to the player
         dx = np.sqrt(self.spd ** 2 / (ratio ** 2 + 1))                      # Find the distance to move on the x-axis (via pythagorean theorem)
-        dy = dx * ratio                                                     # Find the distance to move on the y-axis (via the gradient)
-
+        dy = dx * ratio
+        dx_back = np.sqrt(self.pushback ** 2 / (ratio ** 2 + 1))
+        dy_back = dx_back * ratio
+        
         # Move in the correct direction and don't walk onto the player
         dist = np.sqrt((self.x - self.player.x)**2 + (self.y - self.player.y)**2)
-        if dist > PLAYER_BORDER:
-            if self.x < self.player.x:
+        if self.x < self.player.x:
+            if dist > PLAYER_BORDER and not self.atk:
                 self.x += dx
-            else:
+            if self.pushback_counter % 2 == 0:
+                self.x -= dx_back
+        else:
+            if dist > PLAYER_BORDER and not self.atk:
                 self.x -= dx
-            if self.y < self.player.y:
+            if self.pushback_counter % 2 == 0:
+                self.x += dx_back
+        if self.y < self.player.y:
+            if dist > PLAYER_BORDER and not self.atk:
                 self.y += dy
-            else:
+            if self.pushback_counter % 2 == 0:
+                self.y -= dy_back
+        else:
+            if dist > PLAYER_BORDER and not self.atk:
                 self.y -= dy
+            if self.pushback_counter % 2 == 0:
+                self.y += dy_back
+
+        if self.pushback > 0:
+            if self.pushback_counter % 2 == 0:
+                self.pushback //= 2
+            self.pushback_counter += 1
+        elif self.pushback == 0:
+            self.pushback_counter = 0
 
     def checkRange(self):
         dist = np.sqrt((self.x - self.player.x) ** 2 + (self.y - self.player.y) ** 2) # Find distance from player
@@ -80,10 +102,24 @@ class Enemy():
             for bottle in self.bottles:
                 if not bottle.active:
                     dist = np.sqrt((bottle.x - self.player.x) ** 2 + (bottle.y - self.player.y) ** 2)
-                    print(dist)
                     if dist < BOTTLE_HITBOX:
                         return 1
                     return 0
+                
+    def checkDmg(self, keys):
+        dist = np.sqrt((self.x - self.player.x)**2 + (self.y - self.player.y)**2)
+        grad = np.abs((self.y - self.player.y) / (self.x - self.player.x))
+        pressed = np.array([(keys[pygame.K_SPACE])])
+        sum = np.sum(pressed)
+        if sum == 0: 
+            return 0
+        if pressed[0]:
+            if grad <= 1 and dist <= PLAYER_SLASH_RANGE or dist <= 20:
+                if self.dmg_counter == 0 and (self.x < self.player.x and self.player.side < 0 or self.x > self.player.x and self.player.side > 0):
+                    self.hp -= PLAYER_ATTACK_POWER
+                    self.pushback = 6
+                    return 1
+        return 0
 
     def attack(self):
         self.atk_counter +=1
@@ -150,10 +186,27 @@ class Enemy():
                 self.img_counter = 0
             self.img = self.walk_txt[idx]
 
+        if self.dmg_counter > 0:
+            self.dmg_counter -= 1
+            self.img = self.overlayRed()
+
         # Flip the image if facing right
         if self.x < self.player.x and self.fall_dir == 0 or self.fall_dir == 1:
-            self.img = pygame.transform.flip(self.img, True, False)
+            self.img = pygame.transform.flip(self.img, True, False)        
         imgRect = self.img.get_rect()
         imgRect.center = (self.x, self.y)
         self.map.blit(self.img, imgRect)
         self.img_counter += 1
+
+    def overlayRed(self):
+        copied = pygame.Surface.copy(self.img)                # Overlay the image with red 
+        for x in range(self.img.get_width()):                 # when taking damage
+            for y in range(self.img.get_height()):            #
+                color = self.img.get_at((x, y))               #
+                if not color.a == 0:                          #
+                    if color.r < 255 - self.dmg_counter * 50: # 
+                        color.r += self.dmg_counter * 50      #
+                    else:                                     #
+                        color.r = 255                         #
+                copied.set_at((x, y), color)                  #
+        return copied

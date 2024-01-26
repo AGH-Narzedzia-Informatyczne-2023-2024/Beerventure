@@ -32,13 +32,10 @@ class Game():
         for upgrade in self.upgrades:
             upgrade.render()
 
-        win_pos = (-((self.player.x + self.player.img.get_width() / 2) * SCALE_FACTOR - WIN_WIDTH / 2),
-                   -((self.player.y + self.player.img.get_height() / 2) * SCALE_FACTOR - WIN_HEIGHT / 2))
+        imgRect = self.player.img.get_rect()
+        imgRect.center = (self.player.x, self.player.y)
+        win_pos = (-(np.floor(imgRect.centerx * SCALE_FACTOR - WIN_WIDTH / 2)),
+                   -(np.floor(imgRect.centery * SCALE_FACTOR - WIN_HEIGHT / 2)))
         pygame.draw.rect(self.window, 'black', (0, 0, WIN_WIDTH, WIN_HEIGHT))
         self.window.blit(pygame.transform.scale(self.map, (MAP_WIDTH * SCALE_FACTOR, MAP_HEIGHT * SCALE_FACTOR)), win_pos)
         pygame.display.update()
-
-    def newFunction(self):
-        print('This is a function added through GitHub')
-
-    
